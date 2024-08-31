@@ -127,8 +127,8 @@ def list_s3_snowflake_diff(ti, **context):
     )
 
     print(f"{diff=}")
-    
-    ti.xcom_push(key="diff_s3_snowflake", value=diff)
+    return diff
+    # ti.xcom_push(key="diff_s3_snowflake", value=diff)
 
 @task(task_id='upload_snowflake')
 def upload_snowflake(ti, **context):
