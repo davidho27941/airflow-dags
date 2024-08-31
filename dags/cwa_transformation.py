@@ -24,7 +24,7 @@ from pathlib import Path
 
 from rich.progress import track
 
-dbt_project_path = Path("/opt/airflow/dags/dbt_snowflake")
+dbt_project_path = Path("/opt/airflow/dags/repo/dags/dbt_snowflake")
 
 profile_config = ProfileConfig(
     profile_name="default",
@@ -131,7 +131,6 @@ def list_s3_snowflake_diff(ti, **context):
     print(f"Found number of different files: {len(diff)}")
     print(f"{diff=}")
     return diff
-    # ti.xcom_push(key="diff_s3_snowflake", value=diff)
 
 @task(task_id='upload_snowflake')
 def upload_snowflake(ti, **context):
