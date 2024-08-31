@@ -37,7 +37,7 @@ profile_config = ProfileConfig(
 
 
 @task(task_id='snowflake_preflight_check')
-def snowflake_preflight_check():
+def snowflake_preflight_check(ti, **context):
     snowflake_user = Variable.get('snowflake_username')
     snowflake_password = Variable.get('snowflake_password')
     snowflake_account = Variable.get('snowflake_account')
@@ -121,10 +121,19 @@ def list_s3_snowflake_diff(ti, **context):
         print(e)
         raise e
     
-    diff = set(s3_filelist).difference(set(snowflake_record_list))
-    
+    diff = list(
+        set(s3_filelist)
+        .difference(set(snowflake_record_list))
+    )
+
     print(f"{diff=}")
-        
+    
+    ti.xcom_push(key="diff_s3_snowflake", value=diff)
+
+@task(task_id='upload_snowflake')
+def upload_snowflake(ti, **context):
+    to_upload = ti.xcom_pull(key=upload_snowflake, task_ids='list_s3_snowflake_diff')
+    print(to_upload)
 
 with DAG(
     dag_id='cwa_transformation_v_0_1_0',
@@ -134,5 +143,6 @@ with DAG(
 ):
     snowflake_preflight_check_task = snowflake_preflight_check()
     list_s3_snowflake_diff_task = list_s3_snowflake_diff()
+    upload_snowflake_task = upload_snowflake()
     
-    snowflake_preflight_check_task >> list_s3_snowflake_diff_task
+    snowflake_preflight_check_task >> list_s3_snowflake_diff_task >> upload_snowflake_task
