@@ -132,7 +132,8 @@ def list_s3_snowflake_diff(ti, **context):
 
 @task(task_id='upload_snowflake')
 def upload_snowflake(ti, **context):
-    to_upload = ti.xcom_pull(key=upload_snowflake, task_ids='list_s3_snowflake_diff')
+    to_upload = ti.xcom_pull(key='upload_snowflake', task_ids='list_s3_snowflake_diff')
+    snowflake_stage_name = Variable.get('snowflake_dev_stage_name')
     print(to_upload)
 
 with DAG(
