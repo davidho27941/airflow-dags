@@ -72,6 +72,7 @@ def upload_s3(ti, **context):
     s3_region_name = Variable.get('s3-default-region')
     
     data = ti.xcom_pull(task_ids='ping_cwa_api_task')
+    print(data)
     data = json.loads(data)
     
     s3 = boto3.client(
