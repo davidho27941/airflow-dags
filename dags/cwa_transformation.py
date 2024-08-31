@@ -115,11 +115,15 @@ def list_s3_snowflake_diff(ti, **context):
         snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
         cursor = snowflake_conn.cursor()
         cursor.execute(f"SELECT log_time FROM {snowflake_schema_cwb}.raw")
-        content = [item for item in cursor]
-        print(content)
+        snowflake_record_list = [item for item in cursor]
+        print(snowflake_record_list)
     except Exception as e:
         print(e)
         raise e
+    
+    diff = set(s3_filelist).difference(set(snowflake_record_list))
+    
+    print(f"{diff=}")
         
 
 with DAG(
