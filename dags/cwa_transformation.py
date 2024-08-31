@@ -183,7 +183,7 @@ def upload_snowflake(ti, **context):
     
 
 with DAG(
-    dag_id='cwa_transformation_v_0_1_0',
+    dag_id='cwa_transformation_v_0_2_0',
     start_date=datetime(2024,1,1),
     catchup=False,
     schedule="1 */2 * * *",
