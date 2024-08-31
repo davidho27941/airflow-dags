@@ -192,4 +192,12 @@ with DAG(
     list_s3_snowflake_diff_task = list_s3_snowflake_diff()
     upload_snowflake_task = upload_snowflake()
     
+    transform_data = DbtTaskGroup(
+        group_id="transform_data",
+        project_config=ProjectConfig(dbt_project_path),
+        operator_args={"install_deps": True},
+        profile_config=profile_config,
+        execution_config=ExecutionConfig(dbt_executable_path=f"/opt/airflow/dbt_venv/bin/dbt",),
+    )
+    
     snowflake_preflight_check_task >> list_s3_snowflake_diff_task >> upload_snowflake_task
