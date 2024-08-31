@@ -60,7 +60,7 @@ def list_s3_snowflake_diff(ti, **context):
         )
         
         objects = s3.list_objects_v2(Bucket=s3_bucket_name)
-        s3_filelist = [obj['key'] for obj in objects['Contents']]
+        s3_filelist = [obj['Key'] for obj in objects['Contents']]
         print(s3_filelist)
         
     except ClientError as e:
