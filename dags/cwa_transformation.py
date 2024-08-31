@@ -81,7 +81,7 @@ def list_s3_snowflake_diff(ti, **context):
         )
         snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
         cursor = snowflake_conn.cursor()
-        cursor().execute(f"SELECT log_time FROM {snowflake_schema_cwb}.raw")
+        cursor.execute(f"SELECT log_time FROM {snowflake_schema_cwb}.raw")
         content = [item for item in cursor]
         print(content)
     except Exception as e:
