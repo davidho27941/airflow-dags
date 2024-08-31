@@ -201,4 +201,4 @@ with DAG(
         execution_config=ExecutionConfig(dbt_executable_path=f"/opt/airflow/dbt_venv/bin/dbt",),
     )
     
-    snowflake_preflight_check_task >> list_s3_snowflake_diff_task >> upload_snowflake_task
+    snowflake_preflight_check_task >> list_s3_snowflake_diff_task >> upload_snowflake_task >> transform_data
