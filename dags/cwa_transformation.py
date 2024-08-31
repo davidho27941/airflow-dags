@@ -61,7 +61,7 @@ def snowflake_preflight_check():
         cursor = snowflake_conn.cursor()
         
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb};")
-        cursor.execute(f"CREATE TABLE  {snowflake_schema_cwb}.raw IF NOT EXISTS;")
+        cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (log_time string, raw_data VARIANT);")
         
     except Exception as e:
         print(e)
