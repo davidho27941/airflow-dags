@@ -156,7 +156,9 @@ def upload_snowflake(ti, **context):
             warehouse = 'COMPUTE_WH',
             region='ap-northeast-1.aws',
         )
-
+        
+        snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
+        
         for file in to_upload_files:
             print(f"Uploading {file}.")
             snowflake_conn.cursor().execute(
