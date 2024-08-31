@@ -32,6 +32,8 @@ def check_bucket_existence(ti, **context):
     )
     
     response = s3.list_buckets()
+    
+    print(response['Buckets'])
 
     if s3_bucket_name in response['Buckets']:
         return 'upload_s3'
