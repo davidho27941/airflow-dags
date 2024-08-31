@@ -61,7 +61,7 @@ def snowflake_preflight_check(ti, **context):
         cursor = snowflake_conn.cursor()
         
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb};")
-        cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (log_time string, raw_data VARIANT);")
+        cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (filename string, raw_data VARIANT);")
         
     except Exception as e:
         print(e)
@@ -94,7 +94,7 @@ def list_s3_snowflake_diff(ti, **context):
         
         objects = s3.list_objects_v2(Bucket=s3_bucket_name)
         s3_filelist = [obj['Key'] for obj in objects['Contents']]
-        print(s3_filelist)
+        print(f"{s3_filelist=}")
         
     except ClientError as e:
         print(e)
@@ -116,7 +116,7 @@ def list_s3_snowflake_diff(ti, **context):
         cursor = snowflake_conn.cursor()
         cursor.execute(f"SELECT log_time FROM {snowflake_schema_cwb}.raw")
         snowflake_record_list = [item for item in cursor]
-        print(snowflake_record_list)
+        print(f"{snowflake_record_list=}")
     except Exception as e:
         print(e)
         raise e
@@ -126,15 +126,57 @@ def list_s3_snowflake_diff(ti, **context):
         .difference(set(snowflake_record_list))
     )
 
+    print(f"Found number of different files: {len(diff)}")
     print(f"{diff=}")
     return diff
     # ti.xcom_push(key="diff_s3_snowflake", value=diff)
 
 @task(task_id='upload_snowflake')
 def upload_snowflake(ti, **context):
-    to_upload = ti.xcom_pull(task_ids='list_s3_snowflake_diff')
+    to_upload_files = ti.xcom_pull(task_ids='list_s3_snowflake_diff')
+    
+    
+    snowflake_user = Variable.get('snowflake_username')
+    snowflake_password = Variable.get('snowflake_password')
+    snowflake_account = Variable.get('snowflake_account')
+    
+    snowflake_database = Variable.get('snowflake_database')
+    snowflake_schema_cwb = Variable.get('snowflake_schema_cwb_dev')
     snowflake_stage_name = Variable.get('snowflake_dev_stage_name')
-    print(to_upload)
+    
+    try:
+        
+        snowflake_conn = snowflake.connector.connect(
+            user=snowflake_user,
+            password=snowflake_password,
+            account=snowflake_account,
+            database=snowflake_database,
+            schema=snowflake_schema_cwb,
+            stage=snowflake_stage_name,
+            warehouse = 'COMPUTE_WH',
+            region='ap-northeast-1.aws',
+        )
+
+        for file in to_upload_files:
+            print(f"Uploading {file}.")
+            snowflake_conn.cursor().execute(
+                f"""
+                COPY INTO {snowflake_schema_cwb}.raw
+                FROM (
+                    SELECT 
+                        '{file}', $1
+                    FROM
+                        @{snowflake_stage_name}/{file}
+                    )
+                    FILE_FORMAT=(TYPE='JSON')
+                ;
+                """
+            )
+        
+    except Exception as e:
+        print(e)
+        raise e
+    
 
 with DAG(
     dag_id='cwa_transformation_v_0_1_0',
