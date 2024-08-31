@@ -1,4 +1,5 @@
 import json
+import pytz
 import boto3
 import snowflake.connector
 
@@ -85,8 +86,8 @@ def upload_s3(ti, **context):
     try:
         # Follow the solution provided by: https://stackoverflow.com/questions/46844263/writing-json-to-file-in-s3-bucket
         # Alternative method: https://repost.aws/questions/QUemVDeKUTRm-KL7DjjHFtSA/uploading-a-file-to-s3-using-python-boto3-and-codepipeline
-        timestamp = f"{datetime.now():%Y-%m-%d_%H_%M}"
-        timestamp_to_pass = f"{datetime.now():%Y-%m-%d %H:%M}"
+        timestamp = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d_%H_%M}"
+        timestamp_to_pass = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d %H:%M}"
         
         file_key = f'weather_report_10min-{timestamp}.json'
         s3.put_object(
