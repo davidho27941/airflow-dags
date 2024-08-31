@@ -22,6 +22,8 @@ from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
 from cosmos.profiles import SnowflakeUserPasswordProfileMapping
 from pathlib import Path
 
+from rich.progress import track
+
 dbt_project_path = Path("/opt/airflow/dags/dbt_snowflake")
 
 profile_config = ProfileConfig(
@@ -159,7 +161,7 @@ def upload_snowflake(ti, **context):
         
         snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
         
-        for file in to_upload_files:
+        for file in track(to_upload_files, total=len(to_upload_files), description='Uploading to snowflake table.'):
             print(f"Uploading {file}.")
             snowflake_conn.cursor().execute(
                 f"""
