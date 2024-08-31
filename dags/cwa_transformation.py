@@ -41,6 +41,15 @@ def list_s3_snowflake_diff(ti, **context):
     s3_key = Variable.get('s3-side-project-key')
     s3_bucket_name = Variable.get('s3-dev-bucket-name')
     s3_region_name = Variable.get('s3-default-region')
+
+    snowflake_user = Variable.get('snowflake_username')
+    snowflake_password = Variable.get('snowflake_password')
+    snowflake_account = Variable.get('snowflake_account')
+    
+    snowflake_database = Variable.get('snowflake_database')
+    snowflake_schema_cwb = Variable.get('snowflake_schema_cwb_dev')
+    snowflake_stage_name = Variable.get('snowflake_stage_name')
+    
     
     try:
         s3 = boto3.client(
@@ -51,13 +60,34 @@ def list_s3_snowflake_diff(ti, **context):
         )
         
         objects = s3.list_objects_v2(Bucket=s3_bucket_name)
-        filelist = [obj for obj in objects['Contents']]
-        print(filelist)
+        s3_filelist = [obj['key'] for obj in objects['Contents']]
+        print(s3_filelist)
         
     except ClientError as e:
         print(e)
         raise e
 
+    try:
+        snowflake_conn = snowflake.connector.connect(
+            user=snowflake_user,
+            password=snowflake_password,
+            account=snowflake_account,
+            database=snowflake_database,
+            schema=snowflake_schema_cwb,
+            stage=snowflake_stage_name,
+            warehouse = 'COMPUTE_WH',
+            region='ap-northeast-1.aws',
+            # role='ACCOUNTADMIN'
+        )
+        snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
+        cursor = snowflake_conn.cursor()
+        cursor().execute(f"SELECT log_time FROM {snowflake_schema_cwb}.raw")
+        content = [item for item in cursor]
+        print(content)
+    except Exception as e:
+        print(e)
+        raise e
+        
 
 with DAG(
     dag_id='cwa_transformation_v_0_1_0',
