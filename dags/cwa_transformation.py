@@ -35,6 +35,39 @@ profile_config = ProfileConfig(
         },
 ))
 
+
+@task(task_id='snowflake_preflight_check')
+def snowflake_preflight_check():
+    snowflake_user = Variable.get('snowflake_username')
+    snowflake_password = Variable.get('snowflake_password')
+    snowflake_account = Variable.get('snowflake_account')
+    
+    snowflake_database = Variable.get('snowflake_database')
+    snowflake_schema_cwb = Variable.get('snowflake_schema_cwb_dev')
+    snowflake_stage_name = Variable.get('snowflake_stage_name')
+    
+    try:
+        snowflake_conn = snowflake.connector.connect(
+            user=snowflake_user,
+            password=snowflake_password,
+            account=snowflake_account,
+            database=snowflake_database,
+            schema=snowflake_schema_cwb,
+            stage=snowflake_stage_name,
+            warehouse = 'COMPUTE_WH',
+            region='ap-northeast-1.aws',
+            # role='ACCOUNTADMIN'
+        )
+        cursor = snowflake_conn.cursor()
+        
+        cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb};")
+        cursor.execute(f"CREATE TABLE  {snowflake_schema_cwb}.raw IF NOT EXISTS;")
+        
+    except Exception as e:
+        print(e)
+        raise e
+    
+
 @task(task_id='list_s3_snowflake_diff')
 def list_s3_snowflake_diff(ti, **context):
     s3_id = Variable.get('s3-side-project-id')
@@ -95,7 +128,7 @@ with DAG(
     catchup=False,
     schedule="1 */2 * * *",
 ):
-    
+    snowflake_preflight_check_task = snowflake_preflight_check()
     list_s3_snowflake_diff_task = list_s3_snowflake_diff()
     
-    list_s3_snowflake_diff_task
+    snowflake_preflight_check_task >> list_s3_snowflake_diff_task
