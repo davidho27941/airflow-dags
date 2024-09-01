@@ -64,7 +64,7 @@ def snowflake_preflight_check(ti, **context):
         
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb};")
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb}_intermediate;")
-        cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb}_transformerd_dev;")
+        cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb}_transformerd;")
         
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (filename string, raw_data VARIANT);")
         
