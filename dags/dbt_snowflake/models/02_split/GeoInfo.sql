@@ -9,4 +9,4 @@ SELECT
 
     GeoInfo:Coordinates[0] as Coordinates_TWD67,
     GeoInfo:Coordinates[1] as Coordinates_WGS84,
-FROM {{ source('cwb_extracted_json', 'extracted_json') }}
+FROM {{ ref('extracted_json') }}

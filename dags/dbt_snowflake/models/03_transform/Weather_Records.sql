@@ -15,4 +15,4 @@ SELECT
         SunshineDuration_10Min,
         Visibility,
         UVIndex,
-FROM {{ source('transformed_json', 'extracted_json') }}
+FROM {{ ref('extracted_json') }}
