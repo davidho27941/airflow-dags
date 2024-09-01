@@ -3,6 +3,6 @@ version: 2
 sources:
   - name: transformed_json
     database: weather_data
-    schema: intermediate_dev
+    schema: cwb_devintermediate
     tables:
       - name: extracted_json
