@@ -197,7 +197,10 @@ with DAG(
     transform_data = DbtTaskGroup(
         group_id="transform_data",
         project_config=ProjectConfig(dbt_project_path),
-        operator_args={"install_deps": True},
+        operator_args={
+            "install_deps": True,
+            "dbt_cmd_flags": ["--target-path"," /opt/airflow/new_target"]
+        },
         profile_config=profile_config,
         execution_config=ExecutionConfig(dbt_executable_path=f"/opt/airflow/dbt_venv/bin/dbt",),
     )
