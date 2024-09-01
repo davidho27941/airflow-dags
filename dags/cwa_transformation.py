@@ -4,7 +4,7 @@ import snowflake.connector
 
 from airflow import DAG
 # from airflow.operators.python import PythonOperator
-# from airflow.operators.bash import BashOperator
+from airflow.operators.bash import BashOperator
 
 from airflow.decorators import task
 from airflow.utils.trigger_rule import TriggerRule
@@ -205,4 +205,9 @@ with DAG(
         execution_config=ExecutionConfig(dbt_executable_path=f"/opt/airflow/dbt_venv/bin/dbt",),
     )
     
-    snowflake_preflight_check_task >> list_s3_snowflake_diff_task >> upload_snowflake_task >> transform_data
+    test_dbt_output = BashOperator(
+        task_id='test_dbt',
+        bash_command='ls /opt/airflow/'
+    )
+    
+    snowflake_preflight_check_task >> list_s3_snowflake_diff_task >> upload_snowflake_task >> transform_data >> test_dbt_output
