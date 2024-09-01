@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: cwb_raw_json
+  - name: cwb_raw_json_dev
     database: weather_data
     schema: cwb_dev
     tables:

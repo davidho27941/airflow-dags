@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: cwb_extracted_json
+  - name: cwb_extracted_json_dev
     database: weather_data
-    schema: cwb_intermediate
+    schema: cwb_intermediate_dev
     tables:
       - name: extracted_json
