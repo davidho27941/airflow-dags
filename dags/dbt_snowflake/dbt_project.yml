@@ -38,8 +38,8 @@ models:
       +column_types:
         StationId: varchar(32)
     02_split:
-      schema: transformed
+      schema: transformed_dev
       +materialized: incremental
     03_transform:
-      schema: transformed
+      schema: transformed_dev
       +materialized: incremental
