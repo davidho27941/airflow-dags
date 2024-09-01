@@ -33,13 +33,13 @@ models:
   dbt_snowflake_demo:
     # Config indicated by + and applies to all files under models/example/
     01_extract:
-      +schema: intermediate_dev
+      +schema: intermediate
       +materialized: incremental
       +column_types:
         StationId: varchar(32)
     02_split:
-      +schema: transformed_dev
+      +schema: transformed
       +materialized: incremental
     03_transform:
-      +schema: transformed_dev
+      +schema: transformed
       +materialized: incremental
