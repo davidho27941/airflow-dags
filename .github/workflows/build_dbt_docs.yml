@@ -22,6 +22,8 @@ jobs:
           base64-encoded-secret: ${{ secrets.dbt_profile }}
           filename: "profiles.yml"
           working-directory: dags/dbt_snowflake
+      
+      - name: "test: test if secret to file works as expect"
         run: ls -al dags/dbt_snowflake
 
       - name: "3. Compile dbt"
