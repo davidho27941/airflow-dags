@@ -16,13 +16,17 @@ jobs:
         id: step-02
         run: pip3 install dbt-core dbt-snowflake
       
-      - name: "3. Compile dbt"
-        id: step-03
-        working-directory: dags/dbt_snowflake
+      - name: "test: secret to file"
+        uses: mobiledevops/secret-to-file-action@v1
         with:
           base64-encoded-secret: ${{ secrets.dbt_profile }}
           filename: "profiles.yml"
           working-directory: dags/dbt_snowflake
+        runs: ls -al dags/dbt_snowflake
+
+      - name: "3. Compile dbt"
+        id: step-03
+        working-directory: dags/dbt_snowflake
         run: |
           dbt deps
           dbt compile --profiles-dir .
