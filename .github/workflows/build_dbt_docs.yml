@@ -22,7 +22,7 @@ jobs:
           base64-encoded-secret: ${{ secrets.dbt_profile }}
           filename: "profiles.yml"
           working-directory: dags/dbt_snowflake
-        runs: ls -al dags/dbt_snowflake
+        run: ls -al dags/dbt_snowflake
 
       - name: "3. Compile dbt"
         id: step-03
