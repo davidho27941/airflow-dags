@@ -3,7 +3,7 @@ run-name: GitHub dbt Docs Generation
 on: push
 jobs:
   build_docs:
-    runs-on: ubuntu-tatest
+    runs-on: ubuntu-latest
     environment: dev
     env:
       profile: ${{ secrets.dbt_profile }}
