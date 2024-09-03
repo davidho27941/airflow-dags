@@ -69,6 +69,7 @@ def snowflake_preflight_check(ti, **context):
         
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (filename string, raw_data VARIANT);")
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw_stn IF NOT EXISTS (filename string, raw_data VARIANT);")
+        cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw_stn_rain IF NOT EXISTS (filename string, raw_data VARIANT);")
         
         # cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}_intermediate.extracted_json_v2 IF NOT EXISTS (filename string, raw_data VARIANT);")
         cursor.execute(
@@ -147,6 +148,67 @@ def snowflake_preflight_check(ti, **context):
         print(e)
         raise e
     
+@task(task_id='list_s3_snowflake_diff_station_rain')
+def list_s3_snowflake_diff_station_rain(ti, **context):
+    s3_id = Variable.get('s3-side-project-id')
+    s3_key = Variable.get('s3-side-project-key')
+    s3_bucket_name = Variable.get('s3-dev-bucket-name')
+    s3_region_name = Variable.get('s3-default-region')
+
+    snowflake_user = Variable.get('snowflake_username')
+    snowflake_password = Variable.get('snowflake_password')
+    snowflake_account = Variable.get('snowflake_account')
+    
+    snowflake_database = Variable.get('snowflake_database')
+    snowflake_schema_cwb = Variable.get('snowflake_schema_cwb_dev')
+    snowflake_stage_name = Variable.get('snowflake_stage_name')
+
+    try:
+        s3 = boto3.client(
+            's3',
+            region_name=s3_region_name,
+            aws_access_key_id=s3_id,
+            aws_secret_access_key=s3_key,
+        )
+        
+        objects = s3.list_objects_v2(Bucket=s3_bucket_name, Prefix='rain_fall_station')
+        s3_filelist = [obj['Key'].split('/')[-1] for obj in objects['Contents']]
+        s3_filelist.remove('')
+        print(f"{s3_filelist=}")
+        
+    except ClientError as e:
+        print(e)
+        raise e
+
+    try:
+        snowflake_conn = snowflake.connector.connect(
+            user=snowflake_user,
+            password=snowflake_password,
+            account=snowflake_account,
+            database=snowflake_database,
+            schema=snowflake_schema_cwb,
+            stage=snowflake_stage_name,
+            warehouse = 'COMPUTE_WH',
+            region='ap-northeast-1.aws',
+            # role='ACCOUNTADMIN'
+        )
+        snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
+        cursor = snowflake_conn.cursor()
+        cursor.execute(f"SELECT filename FROM {snowflake_schema_cwb}.raw_stn_rain")
+        snowflake_record_list = [item[0] for item in cursor]
+        print(f"{snowflake_record_list=}")
+    except Exception as e:
+        print(e)
+        raise e
+    
+    diff = list(
+        set(s3_filelist)
+        .difference(set(snowflake_record_list))
+    )
+
+    print(f"Found number of different files: {len(diff)}")
+    print(f"{diff=}")
+    return diff
 
 @task(task_id='list_s3_snowflake_diff_station')
 def list_s3_snowflake_diff_station(ti, **context):
@@ -370,7 +432,54 @@ def upload_snowflake_stn(ti, **context):
     except Exception as e:
         print(e)
         raise e
+
+@task(task_id='upload_snowflake_stn_rain')
+def upload_snowflake_stn_rain(ti, **context):
+    to_upload_files = ti.xcom_pull(task_ids='check_diff_s3_snowflake.list_s3_snowflake_diff_station_rain')
     
+    
+    snowflake_user = Variable.get('snowflake_username')
+    snowflake_password = Variable.get('snowflake_password')
+    snowflake_account = Variable.get('snowflake_account')
+    
+    snowflake_database = Variable.get('snowflake_database')
+    snowflake_schema_cwb = Variable.get('snowflake_schema_cwb_dev')
+    snowflake_stage_name = Variable.get('snowflake_dev_stage_name')
+    
+    try:
+        
+        snowflake_conn = snowflake.connector.connect(
+            user=snowflake_user,
+            password=snowflake_password,
+            account=snowflake_account,
+            database=snowflake_database,
+            schema=snowflake_schema_cwb,
+            stage=snowflake_stage_name,
+            warehouse = 'COMPUTE_WH',
+            region='ap-northeast-1.aws',
+        )
+        
+        snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
+        if len(to_upload_files) > 0:
+            for file in track(to_upload_files, total=len(to_upload_files), description='Uploading to snowflake table.'):
+                print(f"Uploading {file}.")
+                snowflake_conn.cursor().execute(
+                    f"""
+                    COPY INTO {snowflake_schema_cwb}.raw_stn_rain
+                    FROM (
+                        SELECT 
+                            '{file}', $1
+                        FROM
+                            @{snowflake_stage_name}/rain_fall_station/{file}
+                        )
+                        FILE_FORMAT=(TYPE='JSON')
+                    ;
+                    """
+                )
+        
+    except Exception as e:
+        print(e)
+        raise e
 
 with DAG(
     dag_id='cwa_transformation_v_0_3_0',
@@ -384,11 +493,13 @@ with DAG(
     
         list_s3_snowflake_diff_task = list_s3_snowflake_diff()
         list_s3_snowflake_diff_station_task = list_s3_snowflake_diff_station()
+        list_s3_snowflake_diff_station_rain_task = list_s3_snowflake_diff_station_rain()
     
     with TaskGroup(group_id='upload_snowflake_group') as upload_snowflake_group:
     
         upload_snowflake_task = upload_snowflake()
         upload_snowflake_stn_task = upload_snowflake_stn()
+        upload_snowflake_stn_rain_task = upload_snowflake_stn_rain()
 
     transform_data = DbtTaskGroup(
         group_id="transform_data",
