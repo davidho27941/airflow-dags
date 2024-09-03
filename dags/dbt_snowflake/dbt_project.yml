@@ -39,7 +39,7 @@ models:
         StationId: varchar(32)
     02_split:
       +schema: transformed
-      +materialized: incremental
+      +materialized: table
     03_transform:
       +schema: transformed
       +materialized: incremental
