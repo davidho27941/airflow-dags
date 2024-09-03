@@ -17,7 +17,7 @@ WITH old_data AS (
         f_record_nested.value:WeatherElement:SunshineDuration::numeric(10,2) as SunshineDuration_10Min,
         TRIM(f_record_nested.value:WeatherElement:VisibilityDescription, '"') as Visibility,
         f_record_nested.value:WeatherElement:UVIndex::numeric(10,2) as UVIndex,
-        -- f_record_nested.value:GeoInfo as GeoInfo,
+        f_record_nested.value:GeoInfo as GeoInfo,
         raw_data:result:fields as StationFieldsInfo,
     from {{ source('cwb_raw_json', 'raw')}},
         lateral flatten(input => raw_data:records) f_record,
