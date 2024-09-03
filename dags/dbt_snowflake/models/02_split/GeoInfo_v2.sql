@@ -27,11 +27,4 @@ FROM new_data
         New_data.StationID NOT IN (
             SELECT DISTINCT StationID FROM old_data
         )
-        OR
-        (
-            New_data.StationID IN (SELECT DISTINCT StationID FROM old_data)
-            AND
-            TO_DATE(New_data.StationStartDate) > (SELECT MAX(TO_DATE(StationEndDate)) FROM old_data WHERE old_data.StationID = New_data.StationID)
-        )
-
 {% endif %}
