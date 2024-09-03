@@ -97,8 +97,9 @@ def list_s3_snowflake_diff(ti, **context):
             aws_secret_access_key=s3_key,
         )
         
-        objects = s3.list_objects_v2(Bucket=s3_bucket_name)
-        s3_filelist = [obj['Key'] for obj in objects['Contents']]
+        objects = s3.list_objects_v2(Bucket=s3_bucket_name, Prefix='weather_record')
+        s3_filelist = [obj['Key'].split('/')[-1] for obj in objects['Contents']]
+        s3_filelist.remove('')
         print(f"{s3_filelist=}")
         
     except ClientError as e:
