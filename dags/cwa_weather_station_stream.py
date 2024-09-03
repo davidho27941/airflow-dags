@@ -103,7 +103,7 @@ def upload_s3(ti, **context):
         s3.put_object(
             Body=json.dumps(unmanned_data),
             Bucket=s3_bucket_name,
-            Key=manned_file_key
+            Key=unmanned_file_key
         )
         
     except ClientError as e:
