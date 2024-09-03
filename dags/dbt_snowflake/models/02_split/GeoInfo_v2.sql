@@ -18,6 +18,18 @@ WITH old_data AS (
         first_layer.value:NewStationID::varchar AS NewStationID,
     FROM {{ source('cwb_raw_json_stn', 'raw_stn')}} AS New_data,
         LATERAL FLATTEN(input => RAW_DATA:records:data:stationStatus:station) first_layer
+), new_rain_fall_data AS(
+    SELECT 
+        data.value:Station_ID::varchar AS StationID,
+        data.value:Station_name::varchar AS Stationname,
+        data.value:Station_Latitude::number(10,5) AS StationLatitude,
+        data.value:Station_Longitude::number(10,5) AS StationLongitude,
+        data.value:CITY::varchar AS CITY,
+        data.value:CITY_SN::varchar AS CITY_SN,
+        data.value:TOWN::varchar AS TOWN,
+        data.value:TOWN_SN::varchar AS TOWN_SN,
+    FROM  {{ source('cwb_raw_json_stn', 'raw_stn_rain')}},
+        lateral flatten(input => RAW_DATA:Data) data
 ), geo_data AS (
     SELECT 
         DISTINCT StationId,
@@ -29,29 +41,23 @@ WITH old_data AS (
         GeoInfo:Coordinates[1] as Coordinates_WGS84,
     FROM {{ ref('extracted_json_v2') }}
 ), merged_new_data AS (
-    select 
-        geo_basic.StationStatus,
-        geo_basic.StationID,
-        geo_basic.StationName,
-        geo_basic.StationNameEN,
-        geo_basic.StationAltitude,
-        geo_basic.StationLongitude,
-        geo_basic.StationLatitude,
-        geo_basic.CountyName,
-        geo_tw97.TownName::varchar AS TownName,
-        geo_basic.Location,
-        geo_basic.StationStartDate,
-        geo_basic.StationEndDate,
-        geo_basic.Notes,
-        geo_basic.OriginalStationID,
-        geo_basic.NewStationID,
-        geo_tw97.CountyCode::varchar AS CountyCode,
-        geo_tw97.TownCode::varchar AS TownCode,
-        geo_tw97.Coordinates_TWD67,
-        geo_tw97.Coordinates_WGS84,
-    FROM geo_data as geo_tw97
-    RIGHT JOIN new_basic_data as geo_basic
-    ON geo_tw97.StationId = geo_basic.StationID
+    SELECT
+        geo.StationID,
+        geo.STATIONNAME,
+        geo.CountyName,
+        geo.CountyCode,
+        geo.TownName,
+        geo.TownCode,
+        geo.StationAltitude,
+        COALESCE(basic_geo.status, '現存測站') AS StationStutus,
+        COALESCE(geo.Coordinates_TWD67:StationLatitude, basic_geo.StationLatitude, rain.StationLatitude) AS StationLatitude,
+        COALESCE(geo.Coordinates_TWD67:StationLongitude, basic_geo.StationLongitude, rain.StationLongitude) AS StationLongitude,
+        COALESCE(basic_geo.Notes, '') AS Notes,
+    FROM geo_with_tw97 as geo
+    LEFT JOIN new_rain_fall_data as rain
+        ON geo.StationId = rain.StationID
+    LEFT JOIN new_basic_data as basic_geo
+        ON geo.StationId = basic_geo.StationID
 )
 
 SELECT
