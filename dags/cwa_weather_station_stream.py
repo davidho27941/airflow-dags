@@ -97,7 +97,7 @@ def upload_s3(ti, **context):
         
         manned_file_key = f'weather_station_info/weather_station_manned-{timestamp}.json'
         unmanned_file_key = f'weather_station_info/weather_station_unmanned-{timestamp}.json'
-        rain_fall_station_file_key = f'weather_station_info/weather_station_rain_fall-{timestamp}.json'
+        rain_fall_station_file_key = f'rain_fall_station/weather_station_rain_fall-{timestamp}.json'
         s3.put_object(
             Body=json.dumps(manned_data),
             Bucket=s3_bucket_name,
