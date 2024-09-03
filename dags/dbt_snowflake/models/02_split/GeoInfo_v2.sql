@@ -2,7 +2,7 @@ WITH old_data AS (
     SELECT * FROM {{ this }}
 ), new_data AS(
     SELECT 
-        first_layer.value:status::varchar AS status,
+        first_layer.value:status::varchar AS StationStatus,
         first_layer.value:StationID::varchar AS StationID,
         first_layer.value:StationName::varchar AS StationName,
         first_layer.value:StationNameEN::varchar AS StationNameEN,
