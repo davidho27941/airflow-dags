@@ -34,10 +34,11 @@ WITH old_data AS (
     SELECT 
         DISTINCT StationId,
         STATIONNAME,
+        GeoInfo:CountyName as CountyName,
         GeoInfo:CountyCode as CountyCode,
         GeoInfo:TownCode as TownCode,
         GeoInfo:TownName as TownName,
-    
+        GeoInfo:StationAltitude::varchar as StationAltitude,
         GeoInfo:Coordinates[0] as Coordinates_TWD67,
         GeoInfo:Coordinates[1] as Coordinates_WGS84,
     FROM {{ ref('extracted_json_v2') }}
