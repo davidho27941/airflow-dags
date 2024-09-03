@@ -73,8 +73,10 @@ def upload_s3(ti, **context):
     s3_bucket_name = Variable.get('s3-dev-bucket-name')
     s3_region_name = Variable.get('s3-default-region')
     
-    data = ti.xcom_pull(task_ids='ping_cwa_api_task')
-    print(data)
+    manned_data = ti.xcom_pull(task_ids='get_manned_station')
+    unmanned_data = ti.xcom_pull(task_ids='get_unmanned_station')
+    print(manned_data)
+    print(unmanned_data)
     # data = json.loads(data)
     
     # s3 = boto3.client(
@@ -128,7 +130,7 @@ with DAG(
         get_unmanned_station = HttpOperator(
             task_id='get_unmanned_station',
             http_conn_id='cwa_real_time_api',
-            endpoint="/api/v1/rest/datastore/C-B0074-00ㄉ",
+            endpoint="/api/v1/rest/datastore/C-B0074-002",
             method='GET',
             data={
                 'Authorization': f'{token}',
