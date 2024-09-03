@@ -130,7 +130,7 @@ def snowflake_preflight_check(ti, **context):
                 StationAltitude NUMBER(10,2),
                 StationLongitude NUMBER(10,5),
                 StationLatitude NUMBER(10,5),
-                StationStatus VARCHAR(16777216),
+                STATIONSTATUS VARCHAR(16777216),
                 Notes VARCHAR(16777216),
                 Coordinates_TWD67 VARIANT,
                 Coordinates_WGS84 VARIANT
