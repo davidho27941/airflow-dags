@@ -113,7 +113,7 @@ with DAG(
     token = Variable.get('cwa_auth_token')
     with TaskGroup(group_id='Get_Station_Info') as get_data_group:
         get_manned_station = HttpOperator(
-            task_id='ping_cwa_api_task',
+            task_id='get_manned_station',
             http_conn_id='cwa_real_time_api',
             endpoint="/api/v1/rest/datastore/C-B0074-001",
             method='GET',
@@ -126,7 +126,7 @@ with DAG(
         )
         
         get_unmanned_station = HttpOperator(
-            task_id='ping_cwa_api_task',
+            task_id='get_unmanned_station',
             http_conn_id='cwa_real_time_api',
             endpoint="/api/v1/rest/datastore/C-B0074-00ㄉ",
             method='GET',
