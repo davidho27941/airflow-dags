@@ -49,7 +49,7 @@ WITH old_data AS (
         geo_tw97.TownCode::varchar,
         geo_tw97.Coordinates_TWD67,
         geo_tw97.Coordinates_WGS84,
-    FROM geo_with_tw97 as geo_tw97
+    FROM geo_data as geo_tw97
     RIGHT JOIN new_basic_data as geo_basic
     ON geo_tw97.StationId = geo_basic.StationID
 )
