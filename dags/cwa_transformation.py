@@ -229,21 +229,22 @@ def upload_snowflake(ti, **context):
         
         snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
         
-        for file in track(to_upload_files, total=len(to_upload_files), description='Uploading to snowflake table.'):
-            print(f"Uploading {file}.")
-            snowflake_conn.cursor().execute(
-                f"""
-                COPY INTO {snowflake_schema_cwb}.raw
-                FROM (
-                    SELECT 
-                        '{file}', $1
-                    FROM
-                        @{snowflake_stage_name}/weather_record/{file}
-                    )
-                    FILE_FORMAT=(TYPE='JSON')
-                ;
-                """
-            )
+        if len(to_upload_files) > 0:
+            for file in track(to_upload_files, total=len(to_upload_files), description='Uploading to snowflake table.'):
+                print(f"Uploading {file}.")
+                snowflake_conn.cursor().execute(
+                    f"""
+                    COPY INTO {snowflake_schema_cwb}.raw
+                    FROM (
+                        SELECT 
+                            '{file}', $1
+                        FROM
+                            @{snowflake_stage_name}/weather_record/{file}
+                        )
+                        FILE_FORMAT=(TYPE='JSON')
+                    ;
+                    """
+                )
         
     except Exception as e:
         print(e)
@@ -276,22 +277,22 @@ def upload_snowflake_stn(ti, **context):
         )
         
         snowflake_conn.cursor().execute(f"USE DATABASE {snowflake_database};")
-        
-        for file in track(to_upload_files, total=len(to_upload_files), description='Uploading to snowflake table.'):
-            print(f"Uploading {file}.")
-            snowflake_conn.cursor().execute(
-                f"""
-                COPY INTO {snowflake_schema_cwb}.raw_stn
-                FROM (
-                    SELECT 
-                        '{file}', $1
-                    FROM
-                        @{snowflake_stage_name}/weather_station_info/{file}
-                    )
-                    FILE_FORMAT=(TYPE='JSON')
-                ;
-                """
-            )
+        if len(to_upload_files) > 0:
+            for file in track(to_upload_files, total=len(to_upload_files), description='Uploading to snowflake table.'):
+                print(f"Uploading {file}.")
+                snowflake_conn.cursor().execute(
+                    f"""
+                    COPY INTO {snowflake_schema_cwb}.raw_stn
+                    FROM (
+                        SELECT 
+                            '{file}', $1
+                        FROM
+                            @{snowflake_stage_name}/weather_station_info/{file}
+                        )
+                        FILE_FORMAT=(TYPE='JSON')
+                    ;
+                    """
+                )
         
     except Exception as e:
         print(e)
