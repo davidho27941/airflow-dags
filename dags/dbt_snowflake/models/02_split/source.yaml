@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: cwb_raw_json_stn
+    database: weather_data
+    schema: cwb_dev
+    tables:
+      - name: raw_stn
