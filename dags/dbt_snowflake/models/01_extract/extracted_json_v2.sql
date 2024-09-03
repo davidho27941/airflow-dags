@@ -30,6 +30,6 @@ FROM new_data
 
 {% if is_incremental() %}
     WHERE ObsTime > (
-        SELECT MIN(ObsTime) FROM old_data
+        SELECT MAX(ObsTime) FROM old_data
     )
 {% endif %}
