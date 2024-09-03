@@ -73,8 +73,8 @@ def upload_s3(ti, **context):
     s3_bucket_name = Variable.get('s3-dev-bucket-name')
     s3_region_name = Variable.get('s3-default-region')
     
-    manned_data = ti.xcom_pull(task_ids='get_manned_station')
-    unmanned_data = ti.xcom_pull(task_ids='get_unmanned_station')
+    manned_data = ti.xcom_pull(task_ids='Get_Station_Info.get_manned_station')
+    unmanned_data = ti.xcom_pull(task_ids='Get_Station_Info.get_unmanned_station')
     
     manned_data = json.loads(manned_data)
     unmanned_data = json.loads(unmanned_data)
