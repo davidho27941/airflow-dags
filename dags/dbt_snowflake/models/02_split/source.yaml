@@ -6,3 +6,4 @@ sources:
     schema: cwb_dev
     tables:
       - name: raw_stn
+      - name: raw_stn_rain
