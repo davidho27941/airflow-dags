@@ -128,12 +128,18 @@ def snowflake_preflight_check(ti, **context):
                 StationLongitude NUMBER(10,5),
                 StationLatitude NUMBER(10,5),
                 CountyName VARCHAR(16777216),
+                TownName VARCHAR(16777216),
                 Location VARCHAR(16777216),
                 StationStartDate VARCHAR(16777216),
                 StationEndDate VARCHAR(16777216),
                 Notes VARCHAR(16777216),
                 OriginalStationID VARCHAR(16777216),
-                NewStationID VARCHAR(16777216)
+                NewStationID VARCHAR(16777216),
+                CountyCode VARCHAR(16777216),
+                TownCode VARCHAR(16777216),
+                Coordinates_TWD67 VARIANT,
+                Coordinates_WGS84 VARIANT,
+                
             );
             """
         )
