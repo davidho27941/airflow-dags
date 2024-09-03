@@ -75,6 +75,10 @@ def upload_s3(ti, **context):
     
     manned_data = ti.xcom_pull(task_ids='get_manned_station')
     unmanned_data = ti.xcom_pull(task_ids='get_unmanned_station')
+    
+    manned_data = json.loads(manned_data)
+    unmanned_data = json.loads(unmanned_data)
+    
     print(manned_data)
     print(unmanned_data)
     # data = json.loads(data)
