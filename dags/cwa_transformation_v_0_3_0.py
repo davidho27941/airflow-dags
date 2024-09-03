@@ -65,7 +65,7 @@ def snowflake_preflight_check(ti, **context):
         
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb};")
         cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb}_intermediate;")
-        cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb}_transformerd;")
+        cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {snowflake_schema_cwb}_transformed;")
         
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (filename string, raw_data VARIANT);")
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw_stn IF NOT EXISTS (filename string, raw_data VARIANT);")
@@ -97,7 +97,7 @@ def snowflake_preflight_check(ti, **context):
         # cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}_transformerd.weather_records_v2 IF NOT EXISTS (filename string, raw_data VARIANT);")
         cursor.execute(
             f"""
-            CREATE TABLE {snowflake_schema_cwb}_transformerd.weather_records_v2 IF NOT EXISTS  (
+            CREATE TABLE {snowflake_schema_cwb}_transformed.weather_records_v2 IF NOT EXISTS  (
                 STATIONID VARCHAR(16777216),
                 STATIONNAME VARCHAR(16777216),
                 OBSTIME TIMESTAMP_NTZ(9),
@@ -119,7 +119,7 @@ def snowflake_preflight_check(ti, **context):
         
         cursor.execute(
             f"""
-            CREATE TABLE {snowflake_schema_cwb}_transformerd.GeoInfo_v2 IF NOT EXISTS  (
+            CREATE TABLE {snowflake_schema_cwb}_transformed.GeoInfo_v2 IF NOT EXISTS  (
                 StationStatus VARCHAR(16777216),
                 StationID VARCHAR(16777216),
                 STATIONNAME VARCHAR(16777216),
