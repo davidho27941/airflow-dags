@@ -94,7 +94,7 @@ def upload_s3(ti, **context):
         timestamp_to_pass = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d %H:%M}"
         
         manned_file_key = f'weather_station_info/weather_station_manned-{timestamp}.json'
-        unmanned_file_key = f'weather_station_info//weather_station_unmanned-{timestamp}.json'
+        unmanned_file_key = f'weather_station_info/weather_station_unmanned-{timestamp}.json'
         s3.put_object(
             Body=json.dumps(manned_data),
             Bucket=s3_bucket_name,
