@@ -75,9 +75,11 @@ def upload_s3(ti, **context):
     
     manned_data = ti.xcom_pull(task_ids='Get_Station_Info.get_manned_station')
     unmanned_data = ti.xcom_pull(task_ids='Get_Station_Info.get_unmanned_station')
+    rain_fall_station_data = ti.xcom_pull(task_ids='Get_Station_Info.get_rain_fall_station')
     
     manned_data = json.loads(manned_data)
     unmanned_data = json.loads(unmanned_data)
+    rain_fall_station_data = json.loads(rain_fall_station_data)
     
     
     s3 = boto3.client(
@@ -95,15 +97,21 @@ def upload_s3(ti, **context):
         
         manned_file_key = f'weather_station_info/weather_station_manned-{timestamp}.json'
         unmanned_file_key = f'weather_station_info/weather_station_unmanned-{timestamp}.json'
+        rain_fall_station_file_key = f'weather_station_info/weather_station_rain_fall-{timestamp}.json'
         s3.put_object(
             Body=json.dumps(manned_data),
             Bucket=s3_bucket_name,
             Key=manned_file_key
         )
         s3.put_object(
-            Body=json.dumps(unmanned_data),
+            Body=json.dumps(rain_fall_station_data),
             Bucket=s3_bucket_name,
             Key=unmanned_file_key
+        )
+        s3.put_object(
+            Body=json.dumps(unmanned_data),
+            Bucket=s3_bucket_name,
+            Key=rain_fall_station_file_key
         )
         
     except ClientError as e:
@@ -144,6 +152,15 @@ with DAG(
             headers={"Content-Type": "application/json"},
             log_response=True,
         )
+        
+        get_rain_fall_station = HttpOperator(
+            task_id='get_rain_fall_station',
+            http_conn_id='rain_fall_stn_connection',
+            endpoint="/api/v1/TaiwanRainfallStationInformationType/",
+            method='GET',
+            headers={"Content-Type": "application/json"},
+            log_response=True,
+        )
 
     check_bucket_existence_task = check_bucket_existence()
     create_bucket_task = create_bucket()
@@ -152,3 +169,4 @@ with DAG(
     get_data_group >> check_bucket_existence_task
     check_bucket_existence_task >> create_bucket_task >> upload_s3_task
     check_bucket_existence_task >> upload_s3_task
+    
