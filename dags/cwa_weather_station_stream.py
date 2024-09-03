@@ -79,35 +79,36 @@ def upload_s3(ti, **context):
     manned_data = json.loads(manned_data)
     unmanned_data = json.loads(unmanned_data)
     
-    print(manned_data)
-    print(unmanned_data)
-    # data = json.loads(data)
     
-    # s3 = boto3.client(
-    #     's3',
-    #     region_name=s3_region_name,
-    #     aws_access_key_id=s3_id,
-    #     aws_secret_access_key=s3_key,
-    # )
+    s3 = boto3.client(
+        's3',
+        region_name=s3_region_name,
+        aws_access_key_id=s3_id,
+        aws_secret_access_key=s3_key,
+    )
     
-    # try:
-    #     # Follow the solution provided by: https://stackoverflow.com/questions/46844263/writing-json-to-file-in-s3-bucket
-    #     # Alternative method: https://repost.aws/questions/QUemVDeKUTRm-KL7DjjHFtSA/uploading-a-file-to-s3-using-python-boto3-and-codepipeline
-    #     timestamp = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d_%H_%M}"
-    #     timestamp_to_pass = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d %H:%M}"
+    try:
+        # Follow the solution provided by: https://stackoverflow.com/questions/46844263/writing-json-to-file-in-s3-bucket
+        # Alternative method: https://repost.aws/questions/QUemVDeKUTRm-KL7DjjHFtSA/uploading-a-file-to-s3-using-python-boto3-and-codepipeline
+        timestamp = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d_%H_%M}"
+        timestamp_to_pass = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d %H:%M}"
         
-    #     file_key = f'weather_record/weather_report_10min-{timestamp}.json'
-    #     s3.put_object(
-    #         Body=json.dumps(data),
-    #         Bucket=s3_bucket_name,
-    #         Key=file_key
-    #     )
-    #     info = (file_key, timestamp_to_pass)
-    #     return info
+        manned_file_key = f'weather_station_info/weather_station_manned-{timestamp}.json'
+        unmanned_file_key = f'weather_station_info//weather_station_unmanned-{timestamp}.json'
+        s3.put_object(
+            Body=json.dumps(manned_data),
+            Bucket=s3_bucket_name,
+            Key=manned_file_key
+        )
+        s3.put_object(
+            Body=json.dumps(unmanned_data),
+            Bucket=s3_bucket_name,
+            Key=manned_file_key
+        )
         
-    # except ClientError as e:
-    #     print(e)
-    #     raise e
+    except ClientError as e:
+        print(e)
+        raise e
 
 with DAG(
     dag_id='cwa_station_stream_v_1_0_0',
