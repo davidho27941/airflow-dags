@@ -89,6 +89,7 @@ def snowflake_preflight_check(ti, **context):
                 SUNSHINEDURATION_10MIN NUMBER(10,2),
                 VISIBILITY VARCHAR(16777216),
                 UVINDEX NUMBER(10,2),
+                GEOINFO VARIANT,
                 STATIONFIELDSINFO VARIANT
             );
             """
