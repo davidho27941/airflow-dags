@@ -35,11 +35,16 @@ models:
     01_extract:
       +schema: intermediate
       +materialized: incremental
+      +incremental_strategy: 'delete+insert'
       +column_types:
         StationId: varchar(32)
     02_split:
       +schema: transformed
-      +materialized: table
+      +materialized: incremental
+      +incremental_strategy: 'delete+insert'
+      +unique_key: 'StationID'
     03_transform:
       +schema: transformed
       +materialized: incremental
+      +incremental_strategy: 'delete+insert'
+
