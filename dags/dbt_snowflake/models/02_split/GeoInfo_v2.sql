@@ -33,6 +33,7 @@ WITH old_data AS (
 ), geo_data AS (
     SELECT 
         DISTINCT StationId,
+        STATIONNAME,
         GeoInfo:CountyCode as CountyCode,
         GeoInfo:TownCode as TownCode,
         GeoInfo:TownName as TownName,
