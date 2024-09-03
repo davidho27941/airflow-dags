@@ -114,7 +114,7 @@ with DAG(
     dag_id='cwa_station_stream_v_1_0_0',
     start_date=datetime(2024,1,1),
     catchup=False,
-    schedule="1/10 * * * *",
+    schedule="1 12 */7 * *",
 ):
     
     token = Variable.get('cwa_auth_token')
