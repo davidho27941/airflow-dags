@@ -138,8 +138,7 @@ def snowflake_preflight_check(ti, **context):
                 CountyCode VARCHAR(16777216),
                 TownCode VARCHAR(16777216),
                 Coordinates_TWD67 VARIANT,
-                Coordinates_WGS84 VARIANT,
-                
+                Coordinates_WGS84 VARIANT
             );
             """
         )
