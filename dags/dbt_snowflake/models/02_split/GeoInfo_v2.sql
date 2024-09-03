@@ -45,8 +45,8 @@ WITH old_data AS (
         geo_basic.Notes,
         geo_basic.OriginalStationID,
         geo_basic.NewStationID,
-        geo_tw97.CountyCode::varchar,
-        geo_tw97.TownCode::varchar,
+        geo_tw97.CountyCode::varchar AS CountyCode,
+        geo_tw97.TownCode::varchar AS TownCode,
         geo_tw97.Coordinates_TWD67,
         geo_tw97.Coordinates_WGS84,
     FROM geo_data as geo_tw97
