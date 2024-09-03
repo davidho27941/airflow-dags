@@ -1,3 +1,7 @@
+WITH source_data AS (
+    SELECT * FROM {{ this }}
+)
+
 SELECT 
     first_layer.value:status::varchar AS status,
     first_layer.value:StationID::varchar AS StationID,
@@ -12,18 +16,18 @@ SELECT
     first_layer.value:Notes::varchar AS Notes,
     first_layer.value:OriginalStationID::varchar AS OriginalStationID,
     first_layer.value:NewStationID::varchar AS NewStationID,
-FROM {{ source('cwb_raw_json_stn', 'raw_stn')}},
+FROM {{ source('cwb_raw_json_stn', 'raw_stn')}} AS New_data,
     LATERAL FLATTEN(input => RAW_DATA:records:data:stationStatus:station) first_layer;
 {% if is_incremental() %}
     WHERE 
-        StationID NOT IN (
-            SELECT DISTINCT StationID FROM CWB_TRANSFORMED.GeoInfo_v2
+        New_data.StationID NOT IN (
+            SELECT DISTINCT StationID FROM source_data
         )
         OR
         (
-            StationID IN (SELECT DISTINCT StationID FROM CWB_TRANSFORMED.GeoInfo_v2)
+            New_data.StationID IN (SELECT DISTINCT StationID FROM source_data)
             AND
-            TO_DATE(StationStartDate) > TO_DATE(StationEndDate)
+            TO_DATE(New_data.StationStartDate) > (SELECT TO_DATE(StationEndDate) FROM source_data WHERE source_data.StationID = New_data.StationID)
         )
 
 {% endif %}
