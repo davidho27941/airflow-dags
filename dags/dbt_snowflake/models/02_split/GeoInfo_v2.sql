@@ -8,6 +8,7 @@ WITH old_data AS (
         first_layer.value:StationNameEN::varchar AS StationNameEN,
         first_layer.value:StationAltitude::float AS StationAltitude,
         first_layer.value:StationLongitude::float AS StationLongitude,
+        first_layer.value:StationLatitude::float AS StationLatitude,
         first_layer.value:CountyName::varchar AS CountyName,
         first_layer.value:Location::varchar AS Location,
         first_layer.value:StationStartDate::varchar AS StationStartDate,
