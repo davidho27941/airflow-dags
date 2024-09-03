@@ -89,17 +89,11 @@ def upload_s3(ti, **context):
         timestamp = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d_%H_%M}"
         timestamp_to_pass = f"{datetime.now(pytz.timezone('Asia/Taipei')):%Y-%m-%d %H:%M}"
         
-        file_key = f'weather_report_10min-{timestamp}.json'
-        file_key_alt = f'weather_record/weather_report_10min-{timestamp}.json'
+        file_key = f'weather_record/weather_report_10min-{timestamp}.json'
         s3.put_object(
             Body=json.dumps(data),
             Bucket=s3_bucket_name,
             Key=file_key
-        )
-        s3.put_object(
-            Body=json.dumps(data),
-            Bucket=s3_bucket_name,
-            Key=file_key_alt
         )
         info = (file_key, timestamp_to_pass)
         return info
