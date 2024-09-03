@@ -53,6 +53,8 @@ WITH old_data AS (
         COALESCE(geo.Coordinates_TWD67:StationLatitude, basic_geo.StationLatitude, rain.StationLatitude) AS StationLatitude,
         COALESCE(geo.Coordinates_TWD67:StationLongitude, basic_geo.StationLongitude, rain.StationLongitude) AS StationLongitude,
         COALESCE(basic_geo.Notes, '') AS Notes,
+        geo.Coordinates_TWD67,
+        geo.Coordinates_WGS84,
     FROM geo_with_tw97 as geo
     LEFT JOIN new_rain_fall_data as rain
         ON geo.StationId = rain.StationID
