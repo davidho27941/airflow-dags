@@ -51,7 +51,7 @@ WITH old_data AS (
         geo.TownName,
         geo.TownCode,
         geo.StationAltitude,
-        COALESCE(basic_geo.status, '現存測站') AS StationStutus,
+        COALESCE(basic_geo.StationStatus, '現存測站') AS StationStutus,
         COALESCE(geo.Coordinates_TWD67:StationLatitude, basic_geo.StationLatitude, rain.StationLatitude) AS StationLatitude,
         COALESCE(geo.Coordinates_TWD67:StationLongitude, basic_geo.StationLongitude, rain.StationLongitude) AS StationLongitude,
         COALESCE(basic_geo.Notes, '') AS Notes,
