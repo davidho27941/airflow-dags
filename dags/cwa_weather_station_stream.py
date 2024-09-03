@@ -104,7 +104,7 @@ def upload_s3(ti, **context):
     #     raise e
 
 with DAG(
-    dag_id='cwa_weather_stream_v_1_1_0',
+    dag_id='cwa_station_stream_v_1_0_0',
     start_date=datetime(2024,1,1),
     catchup=False,
     schedule="1/10 * * * *",
