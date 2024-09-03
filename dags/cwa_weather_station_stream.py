@@ -156,7 +156,7 @@ with DAG(
         get_rain_fall_station = HttpOperator(
             task_id='get_rain_fall_station',
             http_conn_id='rain_fall_stn_connection',
-            endpoint="/api/v1/TaiwanRainfallStationInformationType/",
+            endpoint="/api/v1/TaiwanRainfallStationInformationType",
             method='GET',
             headers={"Content-Type": "application/json"},
             log_response=True,
