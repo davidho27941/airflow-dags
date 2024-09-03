@@ -30,7 +30,7 @@ WITH old_data AS (
     FROM {{ ref('extracted_json_v2') }}
 ), merged_new_data AS (
     select 
-        geo_basic.status,
+        geo_basic.StationStatus,
         geo_basic.StationID,
         geo_basic.StationName,
         geo_basic.StationNameEN,
