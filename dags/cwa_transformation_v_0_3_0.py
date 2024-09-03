@@ -70,6 +70,73 @@ def snowflake_preflight_check(ti, **context):
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw IF NOT EXISTS (filename string, raw_data VARIANT);")
         cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}.raw_stn IF NOT EXISTS (filename string, raw_data VARIANT);")
         
+        # cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}_intermediate.extracted_json_v2 IF NOT EXISTS (filename string, raw_data VARIANT);")
+        cursor.execute(
+            f"""
+            CREATE TABLE {snowflake_schema_cwb}_intermediate.extracted_json_v2 IF NOT EXISTS (
+                STATIONID VARCHAR(16777216),
+                STATIONNAME VARCHAR(16777216),
+                OBSTIME TIMESTAMP_NTZ(9),
+                WEATHER VARCHAR(16777216),
+                AIRTEMPERATURE NUMBER(10,2),
+                AIRPRESSURE NUMBER(10,2),
+                RELATIVEHUMIDITY NUMBER(10,2),
+                WINDSPEED NUMBER(10,2),
+                WINDDIRECTION NUMBER(10,2),
+                WINDDIRECTIONGUST NUMBER(10,2),
+                PEAKGUSTSPEED NUMBER(10,2),
+                PRECIPITATION NUMBER(10,2),
+                SUNSHINEDURATION_10MIN NUMBER(10,2),
+                VISIBILITY VARCHAR(16777216),
+                UVINDEX NUMBER(10,2),
+                GEOINFO VARIANT,
+                STATIONFIELDSINFO VARIANT
+            );
+            """
+        )
+        # cursor.execute(f"CREATE TABLE {snowflake_schema_cwb}_transformerd.weather_records_v2 IF NOT EXISTS (filename string, raw_data VARIANT);")
+        cursor.execute(
+            f"""
+            CREATE TABLE {snowflake_schema_cwb}_transformerd.weather_records_v2 IF NOT EXISTS  (
+                STATIONID VARCHAR(16777216),
+                STATIONNAME VARCHAR(16777216),
+                OBSTIME TIMESTAMP_NTZ(9),
+                WEATHER VARCHAR(16777216),
+                AIRTEMPERATURE NUMBER(10,2),
+                AIRPRESSURE NUMBER(10,2),
+                RELATIVEHUMIDITY NUMBER(10,2),
+                WINDSPEED NUMBER(10,2),
+                WINDDIRECTION NUMBER(10,2),
+                WINDDIRECTIONGUST NUMBER(10,2),
+                PEAKGUSTSPEED NUMBER(10,2),
+                PRECIPITATION NUMBER(10,2),
+                SUNSHINEDURATION_10MIN NUMBER(10,2),
+                VISIBILITY VARCHAR(16777216),
+                UVINDEX NUMBER(10,2)
+            );
+            """
+        )
+        
+        cursor.execute(
+            f"""
+            CREATE TABLE {snowflake_schema_cwb}_transformerd.GeoInfo_v2 IF NOT EXISTS  (
+                StationStatus VARCHAR(16777216),
+                StationID VARCHAR(16777216),
+                STATIONNAME VARCHAR(16777216),
+                StationNameEN VARCHAR(16777216),
+                StationAltitude NUMBER(10,5),
+                StationLongitude NUMBER(10,5),
+                CountyName VARCHAR(16777216),
+                Location VARCHAR(16777216),
+                StationStartDate VARCHAR(16777216),
+                StationEndDate VARCHAR(16777216),
+                Notes VARCHAR(16777216),
+                OriginalStationID VARCHAR(16777216),
+                NewStationID VARCHAR(16777216),
+            );
+            """
+        )
+        
     except Exception as e:
         print(e)
         raise e
