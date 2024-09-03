@@ -1,4 +1,4 @@
-WITH source_data AS (
+WITH old_data AS (
     SELECT * FROM {{ this }}
 ), new_data AS(
     SELECT 
@@ -25,13 +25,13 @@ FROM new_data
 {% if is_incremental() %}
     WHERE 
         New_data.StationID NOT IN (
-            SELECT DISTINCT StationID FROM source_data
+            SELECT DISTINCT StationID FROM old_data
         )
         OR
         (
-            New_data.StationID IN (SELECT DISTINCT StationID FROM source_data)
+            New_data.StationID IN (SELECT DISTINCT StationID FROM old_data)
             AND
-            TO_DATE(New_data.StationStartDate) > (SELECT TO_DATE(StationEndDate) FROM source_data WHERE source_data.StationID = New_data.StationID)
+            TO_DATE(New_data.StationStartDate) > (SELECT MAX(TO_DATE(StationEndDate)) FROM old_data WHERE old_data.StationID = New_data.StationID)
         )
 
 {% endif %}
