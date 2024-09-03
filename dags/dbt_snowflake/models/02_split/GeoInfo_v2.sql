@@ -55,7 +55,7 @@ WITH old_data AS (
         COALESCE(basic_geo.Notes, '') AS Notes,
         geo.Coordinates_TWD67,
         geo.Coordinates_WGS84,
-    FROM geo_with_tw97 as geo
+    FROM geo_data as geo
     LEFT JOIN new_rain_fall_data as rain
         ON geo.StationId = rain.StationID
     LEFT JOIN new_basic_data as basic_geo
