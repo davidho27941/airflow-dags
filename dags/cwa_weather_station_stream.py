@@ -104,12 +104,12 @@ def upload_s3(ti, **context):
             Key=manned_file_key
         )
         s3.put_object(
-            Body=json.dumps(rain_fall_station_data),
+            Body=json.dumps(unmanned_data),
             Bucket=s3_bucket_name,
             Key=unmanned_file_key
         )
         s3.put_object(
-            Body=json.dumps(unmanned_data),
+            Body=json.dumps(rain_fall_station_data),
             Bucket=s3_bucket_name,
             Key=rain_fall_station_file_key
         )
