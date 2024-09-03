@@ -30,6 +30,8 @@ FROM new_data
 
 {% if is_incremental() %}
     WHERE ObsTime > (
-        IFNULL(MAX(ObsTime), '2024-01-01')
+        SELECT 
+            IFNULL(MAX(ObsTime), '2024-01-01')
+        FROM old_data
     )
 {% endif %}
