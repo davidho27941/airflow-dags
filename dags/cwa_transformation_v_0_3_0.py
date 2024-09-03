@@ -132,7 +132,7 @@ def snowflake_preflight_check(ti, **context):
                 StationEndDate VARCHAR(16777216),
                 Notes VARCHAR(16777216),
                 OriginalStationID VARCHAR(16777216),
-                NewStationID VARCHAR(16777216),
+                NewStationID VARCHAR(16777216)
             );
             """
         )
