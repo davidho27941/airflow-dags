@@ -106,7 +106,7 @@ with DAG(
     dag_id='cwa_weather_stream_v_1_2_0',
     start_date=datetime(2024,1,1),
     catchup=False,
-    schedule="1/10 * * * *",
+    schedule="3/10 * * * *",
 ):
     
     token = Variable.get('cwa_auth_token')
