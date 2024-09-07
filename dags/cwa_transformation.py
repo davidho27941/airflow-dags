@@ -24,7 +24,7 @@ from pathlib import Path
 
 from rich.progress import track
 
-dbt_project_path = Path("/opt/airflow/dags/repo/dags/dbt_snowflake")
+dbt_project_path = Path("/opt/airflow/dags/repo/dags/weather_data_dbt")
 
 profile_config = ProfileConfig(
     profile_name="default",
