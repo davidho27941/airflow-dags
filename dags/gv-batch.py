@@ -254,7 +254,7 @@ class getOrdersResponseModel(BaseModel):
     
 @task(task_id='python_test')
 def upload_gcs(ti, **context):
-    data = ti.xcom_pill(task_ids='get-order-task-payload')
+    data = ti.xcom_pull(task_ids='get-order-task-payload')
     
     try:
         data = getOrdersResponseModel(**json.loads(data))
