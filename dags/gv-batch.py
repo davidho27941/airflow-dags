@@ -67,6 +67,7 @@ class orderDeliveryModel(BaseModel):
         BaseModel (object): Pydantic base model object.
     """
 
+    id = str
     delivery_option_id: str
     platform: str
     status: str
@@ -88,7 +89,14 @@ class orderDeliveryModel(BaseModel):
     store_closed_at: str | None
     storeclosed_upload_at: str | None
     delivery_type: Optional[str] | None = None
-
+    
+    update_at: str
+    exp_type: Optional[str] | None = None
+    requires_customer_address: Optional[bool] | None = None
+    instore_pickup: Optional[bool] | None = None
+    target_channel_id: Optional[str] | None = None
+    store_address_detail: Optional[dict] | None = None
+    
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
 
