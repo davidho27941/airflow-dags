@@ -67,7 +67,7 @@ class orderDeliveryModel(BaseModel):
         BaseModel (object): Pydantic base model object.
     """
 
-    id = str
+    id: str
     delivery_option_id: str
     platform: str
     status: str
