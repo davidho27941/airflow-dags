@@ -90,12 +90,10 @@ class orderDeliveryModel(BaseModel):
     storeclosed_upload_at: str | None
     delivery_type: Optional[str] | None = None
     
-    update_at: str
+    update_at: Optional[str] | None = None
     exp_type: Optional[str] | None = None
     requires_customer_address: Optional[bool] | None = None
-    instore_pickup: Optional[bool] | None = None
-    target_channel_id: Optional[str] | None = None
-    store_address_detail: Optional[dict] | None = None
+
     
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
@@ -170,6 +168,10 @@ class deliveryDataModel(BaseModel):
     scheduled_delivery_date: str | None
     time_slot_key: str | None
     time_slot_translations: Union[dict, str] | None
+    
+    instore_pickup: Optional[bool] | None = None
+    target_channel_id: Optional[str] | None = None
+    store_address_detail: Optional[dict] | None = None
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
