@@ -139,7 +139,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
         log_response=True,
         s3_bucket=f"{s3_bucket_name}",
-        s3_key=f"weather_record/weather_report_10min-{{ execution_date }}_v2.json",
+        s3_key="weather_record/weather_report_10min-{{ execution_date }}_v2.json",
         aws_conn_id="aws_s3_conn",
     )
 
