@@ -113,18 +113,18 @@ with DAG(
     token = Variable.get('cwa_auth_token')
     s3_bucket_name = Variable.get('s3-dev-bucket-name')
     
-    ping_task = HttpOperator(
-        task_id='ping_cwa_api_task',
-        http_conn_id='cwa_real_time_api',
-        endpoint="/api/v1/rest/datastore/O-A0003-001",
-        method='GET',
-        data={
-            'Authorization': f'{token}',
-            'format': "JSON",
-        },
-        headers={"Content-Type": "application/json"},
-        log_response=True,
-    )
+    # ping_task = HttpOperator(
+    #     task_id='ping_cwa_api_task',
+    #     http_conn_id='cwa_real_time_api',
+    #     endpoint="/api/v1/rest/datastore/O-A0003-001",
+    #     method='GET',
+    #     data={
+    #         'Authorization': f'{token}',
+    #         'format': "JSON",
+    #     },
+    #     headers={"Content-Type": "application/json"},
+    #     log_response=True,
+    # )
 
     
     get_recent_weather_task = HttpToS3Operator(
@@ -141,9 +141,12 @@ with DAG(
         # s3_bucket=f"s3://{s3_bucket_name}",
         s3_key=f"s3://{s3_bucket_name}/weather_record/weather_report_10min-{{ execution_date }}_v2.json",
         aws_conn_id="aws_s3_conn",
+        response_filter=lambda response: json.loads(response.text)
     )
 
-    [ping_task, get_recent_weather_task] >> upload_s3()
+    get_recent_weather_task
+
+    # [ping_task, get_recent_weather_task] >> upload_s3()
 
 
     # check_bucket_existence_task = check_bucket_existence()
