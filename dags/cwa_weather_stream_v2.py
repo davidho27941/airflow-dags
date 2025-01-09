@@ -11,6 +11,7 @@ from airflow.models import Variable
 
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.amazon.aws.transfers.http_to_s3 import HttpToS3Operator
+from airflow.providers.amazon.aws.transfers.s3_to_redshift import S3ToRedshiftOperator
 
 from datetime import datetime, timedelta
 
@@ -46,4 +47,15 @@ with DAG(
         aws_conn_id="aws_s3_conn",
     )
 
-    get_recent_weather_task
+    s3_to_redshift = S3ToRedshiftOperator(
+        task_id='load_s3_weather_into_redshift',
+        redshift_conn_id="weather_redshift_conn",
+        s3_bucket=f"{s3_bucket_name}",
+        s3_key="weather_record/weather_report_10min-{{ execution_date }}_v2.json",
+        schema="public",
+        table="weather_test",
+        copy_options=["JSON 's3://side-project-dev/manifests/jsonpaths/weather/weather_10_min_jsonpaths.json'"],
+        method="APPEND",
+    )
+
+    get_recent_weather_task >> s3_to_redshift
