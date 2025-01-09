@@ -50,6 +50,7 @@ with DAG(
     s3_to_redshift = S3ToRedshiftOperator(
         task_id='load_s3_weather_into_redshift',
         redshift_conn_id="weather_redshift_conn",
+        aws_conn_id="aws_s3_conn",
         s3_bucket=f"{s3_bucket_name}",
         s3_key="weather_record/weather_report_10min-{{ execution_date }}_v2.json",
         schema="public",
