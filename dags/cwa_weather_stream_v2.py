@@ -141,7 +141,6 @@ with DAG(
         # s3_bucket=f"s3://{s3_bucket_name}",
         s3_key=f"s3://{s3_bucket_name}/weather_record/weather_report_10min-{{ execution_date }}_v2.json",
         aws_conn_id="aws_s3_conn",
-        response_filter=lambda response: json.loads(response.text)
     )
 
     get_recent_weather_task
