@@ -54,7 +54,7 @@ with DAG(
         s3_bucket=f"{s3_bucket_name}",
         s3_key="weather_record/weather_report_10min-{{ execution_date }}_v2.json",
         schema="public",
-        table="weather_test",
+        table="weather_test_trunc",
         copy_options=["JSON 's3://side-project-dev/manifests/jsonpaths/weather/weather_10_min_jsonpaths.json'"],
         method="APPEND",
     )
